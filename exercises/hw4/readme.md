@@ -89,3 +89,19 @@ Can we improve this?  (Stay tuned for the next CUDA training session.)
 
 Here is a useful blog to help you get familiar with Nsight Compute: https://devblogs.nvidia.com/using-nsight-compute-to-inspect-your-kernels/
 
+
+## **MY NOTES**
+
+[This page](https://stackoverflow.com/questions/60535867/what-is-a-transaction-and-a-request-in-the-gld-transactions-per-request-metric)
+explains the difference betwwen global loads and requests. Basically, a request is a warp-level
+instruction and a transaction is a 32 byte load instruction. Since a float is 4 bytes and each
+transaction is 32 bytes, a transaction loads 8 floats. Since each warp is loading 32 floats (1 per
+thread), then each warp must make 32/8=4 transactions. Thus we have 4 transactions per request for a
+perfectly colaesced memory access kernel like `column_sums`.
+
+Also, if you don't have access to NSIGHT, here's the equivalent `nvprof` command:
+```
+nvprof -m global_load_requests,gld_transactions,gld_transactions_per_request,dram_read_throughput hw4/matrix_sums
+```
+
+
